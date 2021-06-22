@@ -1,8 +1,7 @@
-/browser.js
 /bench
-/build
-/doc
-/Makefile
 /node_modules
-/src
+/tasks
 /test
+/coverage
+/.vscode
+.gitignore

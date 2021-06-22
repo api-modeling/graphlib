@@ -1,18 +1,22 @@
-var expect = require("../chai").expect;
-var Graph = require("../..").Graph;
+import { expect } from '@esm-bundle/chai';
+import { Graph } from "../../index.js";
 
-exports.tests = tests;
+// exports.tests = tests;
 
-function tests(sp) {
-  describe("allShortestPaths", function() {
-    it("returns 0 for the node itself", function() {
-      var g = new Graph();
+function weightFn(g) {
+  return e => g.edge(e);
+}
+
+export default function tests(sp) {
+  describe("allShortestPaths", () => {
+    it("returns 0 for the node itself", () => {
+      const g = new Graph();
       g.setNode("a");
       expect(sp(g)).to.eql({ a: { a: { distance: 0 } }});
     });
 
-    it("returns the distance and path from all nodes to other nodes", function() {
-      var g = new Graph();
+    it("returns the distance and path from all nodes to other nodes", () => {
+      const g = new Graph();
       g.setEdge("a", "b");
       g.setEdge("b", "c");
       expect(sp(g)).to.eql({
@@ -34,8 +38,8 @@ function tests(sp) {
       });
     });
 
-    it("uses an optionally supplied weight function", function() {
-      var g = new Graph();
+    it("uses an optionally supplied weight function", () => {
+      const g = new Graph();
       g.setEdge("a", "b", 2);
       g.setEdge("b", "c", 3);
 
@@ -58,12 +62,12 @@ function tests(sp) {
       });
     });
 
-    it("uses an optionally supplied incident function", function() {
-      var g = new Graph();
+    it("uses an optionally supplied incident function", () => {
+      const g = new Graph();
       g.setEdge("a", "b");
       g.setEdge("b", "c");
 
-      expect(sp(g, undefined, function(v) { return g.inEdges(v); })).to.eql({
+      expect(sp(g, undefined, v => g.inEdges(v))).to.eql({
         a: {
           a: { distance: 0 },
           b: { distance: Number.POSITIVE_INFINITY },
@@ -82,8 +86,8 @@ function tests(sp) {
       });
     });
 
-    it("works with undirected graphs", function() {
-      var g = new Graph({ directed: false });
+    it("works with undirected graphs", () => {
+      const g = new Graph({ directed: false });
       g.setEdge("a", "b", 1);
       g.setEdge("b", "c", 2);
       g.setEdge("c", "a", 4);
@@ -117,10 +121,4 @@ function tests(sp) {
       });
     });
   });
-}
-
-function weightFn(g) {
-  return function(e) {
-    return g.edge(e);
-  };
 }
