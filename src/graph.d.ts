@@ -1,14 +1,18 @@
-import { CountedEdges, Edge, GraphInit, Label, NodeChildren, NodeIdentifier, NodeParents } from "./types";
+import { CountedEdges, Edge, GraphInit, NodeChildren, NodeIdentifier, NodeParents } from "./types";
 
-export declare class Graph {
+/**
+ * The graph library.
+ * The `N` interface represents a node dictionary and the `E` interface represents an edge dictionary.
+ */
+export declare class Graph<N, E> {
   _isDirected: boolean;
   _isMultigraph: boolean;
   _isCompound: boolean;
-  _label: string;
+  _label: any;
   /**
    * v -> label
    */
-  _nodes: Record<NodeIdentifier, Label>;
+  _nodes: Record<NodeIdentifier, N>;
   _parent: NodeParents;
 
   /** v -> children */
@@ -16,7 +20,7 @@ export declare class Graph {
   /**
      * v -> edgeObj
      */
-  _in: Record<NodeIdentifier, Record<NodeIdentifier, Edge>>;
+  _in: Record<NodeIdentifier, Record<NodeIdentifier, Edge<E>>>;
 
   /**
    * u -> v -> Number
@@ -26,7 +30,7 @@ export declare class Graph {
    * v -> edgeObj
    * @type {}
    */
-  _out: Record<NodeIdentifier, Record<NodeIdentifier, Edge>>;
+  _out: Record<NodeIdentifier, Record<NodeIdentifier, Edge<E>>>;
 
   /**
    * u -> w -> Number
@@ -36,12 +40,12 @@ export declare class Graph {
   /**
    * e -> edgeObj
    */
-  _edgeObjects: Record<NodeIdentifier, Edge>;
+  _edgeObjects: Record<NodeIdentifier, Edge<E>>;
 
   /**
    * e -> label
    */
-  _edgeLabels: Record<NodeIdentifier, Label>;
+  _edgeLabels: Record<NodeIdentifier, E>;
 
   /* Number of nodes in the graph. Should only be changed by the implementation. */
   _nodeCount: number;
@@ -88,29 +92,29 @@ export declare class Graph {
   /**
    * Sets the label for the graph to `label`.
    */
-  setGraph(label: string): Graph;
+  setGraph(label: any): Graph<N,E>;
 
   /**
    * @returns The currently assigned label for the graph. If no label has been assigned, returns undefined
    */
-  graph(): string|undefined;
+  graph(): any|undefined;
 
   /**
    * Defaults to be set when creating a new node
    */
-  _defaultNodeLabelFn(node?: NodeIdentifier): string|undefined;
+  _defaultNodeLabelFn(node?: NodeIdentifier): any|undefined;
 
   /**
    * Defaults to be set when creating a new edge
    */
-  _defaultEdgeLabelFn(v: NodeIdentifier, w: NodeIdentifier, name?: string): string|undefined;
+  _defaultEdgeLabelFn(v: NodeIdentifier, w: NodeIdentifier, name?: string): any|undefined;
 
   /**
    * Sets a new default value that is assigned to nodes that are created without a label. 
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the id of the node being created.
    */
-  setDefaultNodeLabel(newDefault: string|(() => string)): Graph;
+  setDefaultNodeLabel(newDefault: string|((node?: NodeIdentifier) => any)): Graph<N,E>;
 
   /**
    * @returns the number of nodes in the graph.
@@ -134,7 +138,7 @@ export declare class Graph {
   /**
    * Shortcut to calling `setNode()` on each array element
    */
-  setNodes(vs: NodeIdentifier[], value?: Label): Graph;
+  setNodes(vs: NodeIdentifier[], value?: N): Graph<N,E>;
 
   /**
    * Creates or updates the value for the node v in the graph. 
@@ -145,12 +149,12 @@ export declare class Graph {
    * @param v The node to set
    * @returns the graph, allowing this to be chained with other functions. Takes O(1) time.
    */
-  setNode(v: NodeIdentifier, label?: Label): Graph;
+  setNode(v: NodeIdentifier, label?: N): Graph<N,E>;
 
   /**
    * @returns the label assigned to the node or undefined when not found. Takes O(1) time.
    */
-  node(v: NodeIdentifier): Label|undefined;
+  node(v: NodeIdentifier): N|undefined;
 
   /**
    * @returns `true` when the graph has a node. Takes O(1) time.
@@ -163,7 +167,7 @@ export declare class Graph {
    * 
    * @returns the graph, allowing this to be chained with other functions. Takes O(|E|) time.
    */
-  removeNode(v: NodeIdentifier): Graph;
+  removeNode(v: NodeIdentifier): Graph<N,E>;
 
   /**
    * Sets the parent for `v` to `parent` if it is defined or removes the parent for `v` if `parent` is undefined. 
@@ -172,7 +176,7 @@ export declare class Graph {
    * @param parent The parent to set. Removes the parent when not set.
    * @returns the graph, allowing this to be chained with other functions. Takes O(1) time.
    */
-  setParent(v: NodeIdentifier, parent?: NodeIdentifier): Graph;
+  setParent(v: NodeIdentifier, parent?: NodeIdentifier): Graph<N,E>;
 
   _removeFromParentsChildList(v: NodeIdentifier): void;
 
@@ -210,14 +214,14 @@ export declare class Graph {
   /**
    * @param filter The filter function.
    */
-  filterNodes(filter: (id: NodeIdentifier) => boolean): Graph;
+  filterNodes(filter: (id: NodeIdentifier) => boolean): Graph<N,E>;
 
   /**
    * Sets a new default value that is assigned to edges that are created without a label. 
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the parameters (v, w, name).
    */
-  setDefaultEdgeLabel(newDefault: string|((v:NodeIdentifier, w:NodeIdentifier, name?: string) => string)): Graph;
+  setDefaultEdgeLabel(newDefault: string|((v:NodeIdentifier, w:NodeIdentifier, name?: string|number) => any)): Graph<N,E>;
 
   /**
    * @returns the number of edges in the graph.
@@ -227,9 +231,9 @@ export declare class Graph {
   /**
    * @returns the edge object for each edge in the graph. Use edge(edgeObj) to get the label for each edge. Takes O(|E|) time.
    */
-  edges(): Edge[];
+  edges(): Edge<E>[];
 
-  setPath(vs: NodeIdentifier[], value?: string): Graph;
+  setPath(vs: NodeIdentifier[], value?: string): Graph<N,E>;
 
   /**
    * Creates or updates the label for the edge (v, w) with the optionally supplied name. 
@@ -247,7 +251,7 @@ export declare class Graph {
    * @param name
    * @returns Returns the graph, allowing this to be chained with other functions. 
    */
-  setEdge(v: NodeIdentifier|Edge, w?: NodeIdentifier|Label, value?: number|string, name?: string): Graph;
+  setEdge(v: NodeIdentifier|Edge<E>, w?: NodeIdentifier|E, value?: E, name?: string|number): Graph<N,E>;
 
   /**
    * The name parameter is only useful with multi graphs. `v` and `w` can be interchanged for undirected graphs. 
@@ -260,7 +264,7 @@ export declare class Graph {
    * @returns the label for the edge (v, w) if the graph has an edge between `v` and `w` with the optional name.
    * Returns `undefined` if there is no such edge in the graph. 
    */
-  edge(v: Edge|NodeIdentifier, w?: NodeIdentifier|string, name?: string): Label|undefined;
+  edge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string|number): E|undefined;
 
   /**
    * The name parameter is only useful with [multi graphs](https://github.com/dagrejs/graphlib/wiki/API-Reference#multigraphs). 
@@ -273,7 +277,7 @@ export declare class Graph {
    * @param name 
    * @returns `true` if the graph has an edge between `v` and `w` with the optional name. 
    */
-  hasEdge(v: Edge|NodeIdentifier, w?: NodeIdentifier|string, name?: string): boolean;
+  hasEdge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string): boolean;
 
   /**
    * Removes the edge (v, w) if the graph has an edge between `v` and `w` with the optional name. 
@@ -286,7 +290,7 @@ export declare class Graph {
    * @param w Required when `v` is not an edge. When the `v` is an object then this is `name` param.
    * @param name 
    */
-  removeEdge(v: Edge|NodeIdentifier, w?: NodeIdentifier|string, name?: string): Graph;
+  removeEdge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string): Graph<N,E>;
 
   /**
    * Returns all edges that point to the node `v`. 
@@ -297,7 +301,7 @@ export declare class Graph {
    * 
    * @returns {Edge[]|undefined} all edges that point to the node `v`. Returns undefined if node v is not in the graph.
    */
-  inEdges(v: NodeIdentifier, u?: NodeIdentifier): Edge[]|undefined;
+  inEdges(v: NodeIdentifier, u?: NodeIdentifier): Edge<E>[]|undefined;
 
   /**
    * Return all edges that are pointed at by node `v`.
@@ -308,7 +312,7 @@ export declare class Graph {
    * 
    * @returns all edges that are pointed at by node `v`. Returns undefined if node v is not in the graph.
    */
-  outEdges(v: NodeIdentifier, w?: NodeIdentifier): Edge[]|undefined;
+  outEdges(v: NodeIdentifier, w?: NodeIdentifier): Edge<E>[]|undefined;
 
   /**
    * Returns all edges to or from node `v` regardless of direction. 
@@ -318,5 +322,5 @@ export declare class Graph {
    * 
    * @returns {} Returns undefined if node v is not in the graph.
    */
-  nodeEdges(v: NodeIdentifier, w?: NodeIdentifier): Edge[]|undefined;
+  nodeEdges(v: NodeIdentifier, w?: NodeIdentifier): Edge<E>[]|undefined;
 }

@@ -6,8 +6,6 @@ const GRAPH_NODE = "\x00";
 const EDGE_KEY_DELIM = "\x01";
 
 /** @typedef {import('./types').GraphInit} GraphInit */
-/** @typedef {import('./types').NodeLabel} NodeLabel */
-/** @typedef {import('./types').Label} Label */
 /** @typedef {import('./types').NodeIdentifier} NodeIdentifier */
 /** @typedef {import('./types').NodeChildren} NodeChildren */
 /** @typedef {import('./types').NodeParents} NodeParents */
@@ -19,7 +17,7 @@ const EDGE_KEY_DELIM = "\x01";
  * @param {CountedEdge} map 
  * @param {NodeIdentifier} k 
  */
- function incrementOrInitEntry(map, k) {
+function incrementOrInitEntry(map, k) {
   if (map[k]) {
     map[k]++;
   } else {
@@ -43,7 +41,7 @@ function decrementOrRemoveEntry(map, k) {
  * @param {boolean} isDirected 
  * @param {NodeIdentifier} v_
  * @param {NodeIdentifier} w_ Required when the `v` is not an Edge. When the `v` is Edge then this is the same as `value`.
- * @param {string=} name
+ * @param {string|number=} name
  * @returns {string}
  */
 function edgeArgsToId(isDirected, v_, w_, name) {
@@ -61,7 +59,7 @@ function edgeArgsToId(isDirected, v_, w_, name) {
  * @param {boolean} isDirected 
  * @param {NodeIdentifier} v_
  * @param {NodeIdentifier} w_ Required when the `v` is not an Edge. When the `v` is Edge then this is the same as `value`.
- * @param {string=} name
+ * @param {string|number=} name
  * @returns {Edge}
  */
 function edgeArgsToObj(isDirected, v_, w_, name) {
@@ -109,6 +107,11 @@ function isEmptyObject(obj) {
 //    edges up and, object properties, which have string keys, are the closest
 //    we're going to get to a performant hash table in JavaScript.
 
+/**
+ * The graph library.
+ * 
+ * The `N` interface represents a node dictionary and the `E` interface represents an edge dictionary.
+ */
 export class Graph {
   /**
    * @param {GraphInit=} opts Graph init options
@@ -123,13 +126,13 @@ export class Graph {
 
     /**
      * Label for the graph itself
-     * @type {string}
+     * @type {any}
      */
     this._label = undefined;
 
     /**
      * v -> label
-     * @type {Record<NodeIdentifier, Label>}
+     * @type {Record<NodeIdentifier, any>}
      */
     this._nodes = {};
 
@@ -176,7 +179,7 @@ export class Graph {
 
     /**
      * e -> label
-     * @type {Record<NodeIdentifier, Label>}
+     * @type {Record<NodeIdentifier, any>}
      */
     this._edgeLabels = {};
 
@@ -228,7 +231,7 @@ export class Graph {
 
   /**
    * Sets the label for the graph to `label`.
-   * @param {string} label 
+   * @param {any} label 
    * @returns {Graph}
    */
   setGraph(label) {
@@ -237,7 +240,7 @@ export class Graph {
   };
 
   /**
-   * @returns {string|undefined} The currently assigned label for the graph. If no label has been assigned, returns undefined
+   * @returns {any|undefined} The currently assigned label for the graph. If no label has been assigned, returns undefined
    */
   graph() {
     return this._label;
@@ -246,7 +249,7 @@ export class Graph {
   /**
    * Defaults to be set when creating a new node
    * @param {NodeIdentifier=} node 
-   * @returns {string}
+   * @returns {any}
    */
   // eslint-disable-next-line no-unused-vars
   _defaultNodeLabelFn(node) {
@@ -257,8 +260,8 @@ export class Graph {
    * Defaults to be set when creating a new edge
    * @param {NodeIdentifier} v 
    * @param {NodeIdentifier} w 
-   * @param {string=} name 
-   * @returns {string}
+   * @param {string|number=} name 
+   * @returns {any}
    */
   // eslint-disable-next-line no-unused-vars
   _defaultEdgeLabelFn(v, w, name) {
@@ -272,8 +275,8 @@ export class Graph {
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the id of the node being created.
    * 
-   * @param {string|(() => string)} newDefault 
-   * @returns 
+   * @param {string|((node?: NodeIdentifier) => any)} newDefault 
+   * @returns {Graph}
    */
   setDefaultNodeLabel(newDefault) {
     if (typeof newDefault === 'function') {
@@ -322,7 +325,7 @@ export class Graph {
 
   /**
    * @param {NodeIdentifier[]} vs 
-   * @param {Label=} value 
+   * @param {any=} value 
    * @returns {Graph}
    */
   setNodes(vs, value) {
@@ -343,7 +346,7 @@ export class Graph {
    * is assigned. 
    * 
    * @param {NodeIdentifier} v The node to set
-   * @param {Label=} label 
+   * @param {any=} label 
    * @returns {Graph} the graph, allowing this to be chained with other functions. Takes O(1) time.
    */
   setNode(v, label) {
@@ -370,7 +373,7 @@ export class Graph {
 
   /**
    * @param {NodeIdentifier} v 
-   * @returns {Label|undefined} the label assigned to the node or undefined when not found. Takes O(1) time.
+   * @returns {any|undefined} the label assigned to the node or undefined when not found. Takes O(1) time.
    */
   node(v) {
     return this._nodes[v];
@@ -617,7 +620,7 @@ export class Graph {
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the parameters (v, w, name).
    * 
-   * @param {string|((v:NodeIdentifier, w:NodeIdentifier, name?: string) => string)} newDefault 
+   * @param {string|((v:NodeIdentifier, w:NodeIdentifier, name?: string) => any)} newDefault 
    * @returns {Graph}
    */
   setDefaultEdgeLabel(newDefault) {
@@ -670,9 +673,9 @@ export class Graph {
    * Takes O(1) time.
    * 
    * @param {NodeIdentifier|Edge} v
-   * @param {NodeIdentifier|Label=} w Required when the `v` is not an Edge. When the `v` is Edge then this is the same as `value`.
-   * @param {number|string=} value
-   * @param {string=} name
+   * @param {NodeIdentifier|any=} w Required when the `v` is not an Edge. When the `v` is Edge then this is the same as `value`.
+   * @param {any=} value
+   * @param {string|number=} name
    * @returns {Graph} Returns the graph, allowing this to be chained with other functions. 
    */
   setEdge(v, w, value, name) {
@@ -684,7 +687,7 @@ export class Graph {
     let wArg;
     /** @type number|string */
     let valueArg;
-    /** @type string */
+    /** @type string|number */
     let nameArg;
     if (typeof v === 'object' && v !== null && "v" in v) {
       const typed = /** @type Edge */ (v);
@@ -753,8 +756,8 @@ export class Graph {
    * 
    * @param {Edge|NodeIdentifier} v 
    * @param {NodeIdentifier|string=} w Required when `v` is not an edge. When the `v` is an object then this is `name` param.
-   * @param {string=} name 
-   * @returns {Label|undefined} the label for the edge (v, w) if the graph has an edge between `v` and `w` with the optional name.
+   * @param {string|string=} name 
+   * @returns {any|undefined} the label for the edge (v, w) if the graph has an edge between `v` and `w` with the optional name.
    * Returns `undefined` if there is no such edge in the graph. 
    */
   edge(v, w, name) {

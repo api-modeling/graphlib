@@ -266,7 +266,7 @@ describe("Graph", () => {
     });
 
     it("can take a function that takes the node's name", () => {
-      g.setDefaultNodeLabel(v => `${v  }-foo`);
+      g.setDefaultNodeLabel(v => `${v}-foo`);
       g.setNode("a");
       expect(g.node("a")).to.equal("a-foo");
     });
@@ -689,10 +689,10 @@ describe("Graph", () => {
     });
 
     it("handles undirected graph edges", () => {
-      const g = new Graph({ directed: false });
-      g.setEdge("a", "b", "foo");
-      expect(g.edge("a", "b")).to.equal("foo");
-      expect(g.edge("b", "a")).to.equal("foo");
+      const graph = new Graph({ directed: false });
+      graph.setEdge("a", "b", "foo");
+      expect(graph.edge("a", "b")).to.equal("foo");
+      expect(graph.edge("b", "a")).to.equal("foo");
     });
 
     it("handles undirected edges where id has different order than Stringified id", () => {
@@ -856,7 +856,7 @@ describe("Graph", () => {
       expect(g.inEdges("c")).to.eql([{ v: "b", w: "c" }]);
     });
 
-    it("works for multigraphs", () => {
+    it("works for multi-graphs", () => {
       const graph = new Graph({ multigraph: true });
       graph.setEdge("a", "b");
       graph.setEdge("a", "b", undefined, "bar");
@@ -941,7 +941,7 @@ describe("Graph", () => {
       expect(g.nodeEdges("c")).to.eql([{ v: "b", w: "c" }]);
     });
 
-    it("works for multigraphs", () => {
+    it("works for multi-graphs", () => {
       const graph = new Graph({ multigraph: true });
       graph.setEdge("a", "b");
       graph.setEdge({ v: "a", w: "b", name: "bar" });

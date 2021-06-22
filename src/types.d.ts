@@ -21,19 +21,12 @@ export declare interface GraphInit {
   compound?: boolean;
 }
 
-export declare interface NodeLabel {
-  /**
-   * The label of the node.
-   */
-  label: string;
-}
-
-export declare interface Node {
+export declare interface Node<T> {
   /**
    * Node identifier
    */
   v: NodeIdentifier;
-  value?: Label;
+  value?: T;
   parent?: NodeIdentifier;
 }
 
@@ -41,42 +34,41 @@ export declare interface EdgeBase {
   /**
    * The edges start node
    */
-   v: NodeIdentifier;
-   /**
-    * The edges end node
-    */
-   w: NodeIdentifier;
-   /**
-    * The name of the edge.
-    */
-   name?: string;
+  v: NodeIdentifier;
+  /**
+   * The edges end node
+   */
+  w: NodeIdentifier;
+  /**
+   * The name of the edge.
+   */
+  name?: string;
 }
 
-export declare interface Edge extends EdgeBase {
+export declare interface Edge<T> extends EdgeBase {
   /**
    * The label of the edge.
    */
-  label?: Label;
+  label?: T;
 }
 
-export declare interface JsonEdge extends EdgeBase {
+export declare interface JsonEdge<T> extends EdgeBase {
   /**
    * The label of the edge.
    */
-  value?: Label;
+  value?: T;
 }
 
-export type Label = NodeLabel | string | number;
 export type NodeIdentifier = string | number;
 export type NodeChildren = Record<NodeIdentifier, Record<NodeIdentifier, boolean>>;
 export type NodeParents = Record<NodeIdentifier, NodeIdentifier>;
 export type CountedEdge = Record<NodeIdentifier, number>;
 export type CountedEdges = Record<NodeIdentifier, CountedEdge>;
 
-export declare interface GraphJson {
+export declare interface GraphJson<T> {
   options: GraphInit;
-  nodes: Node[];
-  edges: JsonEdge[];
+  nodes: Node<T>[];
+  edges: JsonEdge<T>[];
   value?: string;
 }
 
@@ -85,9 +77,9 @@ export declare interface PriorityQueueItem {
   priority: number;
 }
 
-export declare interface FloydWarshallItem {
+export declare interface NodePath {
   distance: number;
   predecessor?: NodeIdentifier;
 }
 
-export type FloydWarshallResult = Record<NodeIdentifier, Record<NodeIdentifier, FloydWarshallItem>>;
+export type FloydWarshallResult = Record<NodeIdentifier, Record<NodeIdentifier, NodePath>>;
