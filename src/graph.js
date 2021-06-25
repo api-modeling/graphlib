@@ -655,8 +655,14 @@ export class Graph {
     if (!Array.isArray(vs)) {
       return this;
     }
+    // Note, there's a difference here between setting an `undefined` value and not setting it at all.
+    const hasValue = arguments.length > 1;
     vs.reduce((previousValue, currentValue) => {
-      this.setEdge(previousValue, currentValue, value);
+      if (hasValue) {
+        this.setEdge(previousValue, currentValue, value);
+      } else {
+        this.setEdge(previousValue, currentValue);
+      }
       return currentValue;
     });
     return this;
