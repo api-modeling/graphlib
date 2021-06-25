@@ -12,4 +12,4 @@ import { Edge } from "../types";
  * It throws an Error if the graph is not connected.
  * @returns minimum spanning tree of graph.
  */
-export default function prim(g: Graph, weightFunc: (edge: Edge) => number): Graph;
+export default function prim<N, E>(g: Graph<N, E>, weightFunc: (edge: Edge<E>) => number): Graph<N, E>;

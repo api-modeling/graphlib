@@ -15,4 +15,4 @@ import { Edge, NodePath, NodeIdentifier } from "../types.js";
  * for the purposes of shortest path traversal. By default this function uses the graph.outEdges.
  * @returns shortest paths map.
  */
-export default function dijkstraAll(g: Graph, weightFunc?: (edge: Edge) => number, edgeFunc?: (v: NodeIdentifier) => Edge[]): Record<NodeIdentifier, Record<NodeIdentifier, NodePath>>;
+export default function dijkstraAll<N, E>(g: Graph<N, E>, weightFunc?: (edge: Edge<E>) => number, edgeFunc?: (v: NodeIdentifier) => Edge<E>[]): Record<NodeIdentifier, Record<NodeIdentifier, NodePath>>;

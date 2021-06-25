@@ -12,4 +12,4 @@ import { NodeIdentifier } from "../types";
  * @argument graph - graph where to search cycles.
  * @returns cycles list.
  */
-export default function findCycles(g: Graph): NodeIdentifier[][];
+export default function findCycles<N, E>(g: Graph<N, E>): NodeIdentifier[][];

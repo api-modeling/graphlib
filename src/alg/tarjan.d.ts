@@ -14,4 +14,4 @@ import { NodeIdentifier } from "../types";
  * @return an array of components. Each component is itself an array that contains
  * the ids of all nodes in the component.
  */
-export default function tarjan(g: Graph): NodeIdentifier[][];
+export default function tarjan<N, E>(g: Graph<N, E>): NodeIdentifier[][];

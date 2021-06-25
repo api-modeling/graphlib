@@ -65,10 +65,10 @@ export type NodeParents = Record<NodeIdentifier, NodeIdentifier>;
 export type CountedEdge = Record<NodeIdentifier, number>;
 export type CountedEdges = Record<NodeIdentifier, CountedEdge>;
 
-export declare interface GraphJson<T> {
+export declare interface GraphJson<N, E> {
   options: GraphInit;
-  nodes: Node<T>[];
-  edges: JsonEdge<T>[];
+  nodes: Node<N>[];
+  edges: JsonEdge<E>[];
   value?: string;
 }
 

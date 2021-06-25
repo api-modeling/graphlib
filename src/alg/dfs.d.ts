@@ -9,4 +9,4 @@ import { NodeIdentifier } from "../types";
  *
  * Order must be one of "pre" or "post".
  */
-export default function dfs(g: Graph, vs: NodeIdentifier|NodeIdentifier[], order: 'pre'|'post'): NodeIdentifier[];
+export default function dfs<N, E>(g: Graph<N, E>, vs: NodeIdentifier|NodeIdentifier[], order: 'pre'|'post'): NodeIdentifier[];

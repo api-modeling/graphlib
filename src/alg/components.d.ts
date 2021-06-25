@@ -9,4 +9,4 @@ import { NodeIdentifier } from "../types";
  * @argument graph - graph to find components in.
  * @returns array of nodes list representing components
  */
-export default function components(g: Graph): NodeIdentifier[][];
+export default function components<N, E>(g: Graph<N, E>): NodeIdentifier[][];

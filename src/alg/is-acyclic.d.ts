@@ -8,4 +8,4 @@ import { Graph } from "../graph";
  * @argument graph graph to detect whether it acyclic ot not.
  * @returns whether graph contain cycles or not.
  */
-export default function isAcyclic(g: Graph): boolean;
+export default function isAcyclic<N, E>(g: Graph<N, E>): boolean;

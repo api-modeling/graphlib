@@ -10,4 +10,4 @@ import { NodeIdentifier } from "../types";
  * @argument vs - nodes list to traverse.
  * @returns the nodes in the order they were visited as a list of their names.
  */
-export default function preOrder(g: Graph, vs: NodeIdentifier|NodeIdentifier[]): NodeIdentifier[];
+export default function preOrder<N, E>(g: Graph<N, E>, vs: NodeIdentifier|NodeIdentifier[]): NodeIdentifier[];

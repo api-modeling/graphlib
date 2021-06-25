@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable func-names */
 
 import Benchmark from "benchmark";
 import seedrandom from "seedrandom";
@@ -33,8 +34,8 @@ function runBenchmark(name, fn) {
     console.log(msg);
   };
 
-  options.onError = function(bench) {
-    console.error(`    ${  bench.target.error}`);
+  options.onError = (bench) => {
+    console.error(`${bench.target.error}`);
   };
 
   options.setup = function() {
