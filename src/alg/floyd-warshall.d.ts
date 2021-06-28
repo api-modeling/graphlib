@@ -20,4 +20,4 @@ import { Edge, FloydWarshallResult, NodeIdentifier } from "../types";
  * for the purposes of shortest path traversal. By default this function uses the graph.outEdges.
  * @returns shortest pathes map.
  */
-export default function floydWarshall<N, E>(g: Graph<N, E>, weightFn?: (edge: Edge<E>) => number, edgeFn?: (v: NodeIdentifier) => Edge<E>[]): FloydWarshallResult;
+export default function floydWarshall<G, N, E>(g: Graph<G, N, E>, weightFn?: (edge: Edge<E>) => number, edgeFn?: (v: NodeIdentifier) => Edge<E>[]): FloydWarshallResult;

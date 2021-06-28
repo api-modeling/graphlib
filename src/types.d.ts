@@ -65,11 +65,16 @@ export type NodeParents = Record<NodeIdentifier, NodeIdentifier>;
 export type CountedEdge = Record<NodeIdentifier, number>;
 export type CountedEdges = Record<NodeIdentifier, CountedEdge>;
 
-export declare interface GraphJson<N, E> {
+/**
+ * G - Graph value
+ * N - Node value
+ * E - Edge value
+ */
+export declare interface GraphJson<G, N, E> {
   options: GraphInit;
   nodes: Node<N>[];
   edges: JsonEdge<E>[];
-  value?: string;
+  value?: G;
 }
 
 export declare interface PriorityQueueItem {

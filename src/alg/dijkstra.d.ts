@@ -19,4 +19,4 @@ import { Edge, NodePath, NodeIdentifier } from "../types";
  * for the purposes of shortest path traversal. By default this function uses the graph.outEdges.
  * @returns shortest pathes map that starts from node source
  */
-export default function dijkstra<N, E>(g: Graph<N, E>, source: NodeIdentifier, weightFn?: ((edge: Edge<E>) => number), edgeFn?: ((v: NodeIdentifier) => Edge<E>[])): Record<NodeIdentifier, NodePath>;
+export default function dijkstra<G, N, E>(g: Graph<G, N, E>, source: NodeIdentifier, weightFn?: ((edge: Edge<E>) => number), edgeFn?: ((v: NodeIdentifier) => Edge<E>[])): Record<NodeIdentifier, NodePath>;
