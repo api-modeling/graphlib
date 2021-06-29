@@ -75,46 +75,46 @@ export declare class Graph<G, N, E> {
    * undirected.edge("b", "a"); // returns "my-label"
    * ```
    * 
-   * @returns {boolean} `true` if the graph is directed.
+   * @returns `true` if the graph is directed.
    */
   isDirected(): boolean;
 
   /**
-   * @returns {boolean} `true` if the graph is a [multigraph](https://github.com/dagrejs/graphlib/wiki/API-Reference#multigraphs).
+   * @returns `true` if the graph is a [multigraph](https://github.com/dagrejs/graphlib/wiki/API-Reference#multigraphs).
    */
   isMultigraph(): boolean;
 
   /**
-   * @returns {boolean} `true` if the graph is [compound](https://github.com/dagrejs/graphlib/wiki/API-Reference#compound-graphs).
+   * @returns `true` if the graph is [compound](https://github.com/dagrejs/graphlib/wiki/API-Reference#compound-graphs).
    */
   isCompound(): boolean;
 
   /**
    * Sets the label for the graph to `label`.
    */
-  setGraph(label: any): Graph<G,N,E>;
+  setGraph(label: G): this;
 
   /**
    * @returns The currently assigned label for the graph. If no label has been assigned, returns undefined
    */
-  graph(): any|undefined;
+  graph(): G|undefined;
 
   /**
    * Defaults to be set when creating a new node
    */
-  _defaultNodeLabelFn(node?: NodeIdentifier): any|undefined;
+  _defaultNodeLabelFn(node?: NodeIdentifier): N|undefined;
 
   /**
    * Defaults to be set when creating a new edge
    */
-  _defaultEdgeLabelFn(v: NodeIdentifier, w: NodeIdentifier, name?: string): any|undefined;
+  _defaultEdgeLabelFn(v: NodeIdentifier, w: NodeIdentifier, name?: string): E|undefined;
 
   /**
    * Sets a new default value that is assigned to nodes that are created without a label. 
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the id of the node being created.
    */
-  setDefaultNodeLabel(newDefault: string|((node?: NodeIdentifier) => any)): Graph<G,N,E>;
+  setDefaultNodeLabel(newDefault: string|((node?: NodeIdentifier) => N)): this;
 
   /**
    * @returns the number of nodes in the graph.
@@ -138,7 +138,7 @@ export declare class Graph<G, N, E> {
   /**
    * Shortcut to calling `setNode()` on each array element
    */
-  setNodes(vs: NodeIdentifier[], value?: N): Graph<G,N,E>;
+  setNodes(vs: NodeIdentifier[], value?: N): this;
 
   /**
    * Creates or updates the value for the node v in the graph. 
@@ -149,7 +149,7 @@ export declare class Graph<G, N, E> {
    * @param v The node to set
    * @returns the graph, allowing this to be chained with other functions. Takes O(1) time.
    */
-  setNode(v: NodeIdentifier, label?: N): Graph<G,N,E>;
+  setNode(v: NodeIdentifier, label?: N): this;
 
   /**
    * @returns the label assigned to the node or undefined when not found. Takes O(1) time.
@@ -167,7 +167,7 @@ export declare class Graph<G, N, E> {
    * 
    * @returns the graph, allowing this to be chained with other functions. Takes O(|E|) time.
    */
-  removeNode(v: NodeIdentifier): Graph<G,N,E>;
+  removeNode(v: NodeIdentifier): this;
 
   /**
    * Sets the parent for `v` to `parent` if it is defined or removes the parent for `v` if `parent` is undefined. 
@@ -176,7 +176,7 @@ export declare class Graph<G, N, E> {
    * @param parent The parent to set. Removes the parent when not set.
    * @returns the graph, allowing this to be chained with other functions. Takes O(1) time.
    */
-  setParent(v: NodeIdentifier, parent?: NodeIdentifier): Graph<G,N,E>;
+  setParent(v: NodeIdentifier, parent?: NodeIdentifier): this;
 
   _removeFromParentsChildList(v: NodeIdentifier): void;
 
@@ -213,6 +213,7 @@ export declare class Graph<G, N, E> {
 
   /**
    * @param filter The filter function.
+   * @returns A copy of the graph with filtered nodes.
    */
   filterNodes(filter: (id: NodeIdentifier) => boolean): Graph<G,N,E>;
 
@@ -221,7 +222,7 @@ export declare class Graph<G, N, E> {
    * If the value is not a function it is assigned as the label directly. 
    * If the value is a function, it is called with the parameters (v, w, name).
    */
-  setDefaultEdgeLabel(newDefault: string|((v:NodeIdentifier, w:NodeIdentifier, name?: string|number) => any)): Graph<G,N,E>;
+  setDefaultEdgeLabel(newDefault: string|((v:NodeIdentifier, w:NodeIdentifier, name?: string|number) => E)): this;
 
   /**
    * @returns the number of edges in the graph.
@@ -233,7 +234,7 @@ export declare class Graph<G, N, E> {
    */
   edges(): Edge<E>[];
 
-  setPath(vs: NodeIdentifier[], value?: string): Graph<G,N,E>;
+  setPath(vs: NodeIdentifier[], value?: string): this;
 
   /**
    * Creates or updates the label for the edge (v, w) with the optionally supplied name. 
@@ -251,20 +252,46 @@ export declare class Graph<G, N, E> {
    * @param name
    * @returns Returns the graph, allowing this to be chained with other functions. 
    */
-  setEdge(v: NodeIdentifier|Edge<E>, w?: NodeIdentifier|E, value?: E, name?: string|number): Graph<G,N,E>;
+  setEdge(v: NodeIdentifier, w: NodeIdentifier, value?: E, name?: string|number): this;
+  /**
+   * Creates or updates the label for the edge (v, w) with the optionally supplied name. 
+   * If `label` is supplied it is set as the value for the edge. If `label` is not supplied and the edge 
+   * is created by this call then the default edge label will be assigned. 
+   * The name parameter is only useful with multi graphs.
+   * setEdge(v, w, [value, [name]])
+   * setEdge({ v, w, [name] }, [value])
+   * 
+   * Takes O(1) time.
+   * 
+   * @param edge
+   * @param value
+   * @returns Returns the graph, allowing this to be chained with other functions. 
+   */
+  setEdge(edge: Edge<E>, value?: E): this;
 
   /**
    * The name parameter is only useful with multi graphs. `v` and `w` can be interchanged for undirected graphs. 
    * 
    * Takes O(1) time.
    * 
-   * @param v 
-   * @param w Required when `v` is not an edge. When the `v` is an object then this is `name` param.
+   * @param v The id of the source node 
+   * @param w The id of the target node 
    * @param name 
    * @returns the label for the edge (v, w) if the graph has an edge between `v` and `w` with the optional name.
    * Returns `undefined` if there is no such edge in the graph. 
    */
-  edge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string|number): E|undefined;
+  edge(v: NodeIdentifier, w: NodeIdentifier, name?: string|number): E|undefined;
+  /**
+   * The name parameter is only useful with multi graphs. `v` and `w` can be interchanged for undirected graphs. 
+   * 
+   * Takes O(1) time.
+   * 
+   * @param edge
+   * @param name 
+   * @returns the label for the edge (v, w) if the graph has an edge between `v` and `w` with the optional name.
+   * Returns `undefined` if there is no such edge in the graph. 
+   */
+  edge(edge: Edge<E>, name?: string|number): E|undefined;
 
   /**
    * The name parameter is only useful with [multi graphs](https://github.com/dagrejs/graphlib/wiki/API-Reference#multigraphs). 
@@ -272,12 +299,23 @@ export declare class Graph<G, N, E> {
    * 
    * Takes O(1) time.
    * 
-   * @param v 
-   * @param w Required when `v` is not an edge. When the `v` is an object then this is `name` param.
+   * @param v The id of the source node 
+   * @param w The id of the target node 
    * @param name 
    * @returns `true` if the graph has an edge between `v` and `w` with the optional name. 
    */
-  hasEdge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string): boolean;
+  hasEdge(v: NodeIdentifier, w: NodeIdentifier, name?: string): boolean;
+  /**
+   * The name parameter is only useful with [multi graphs](https://github.com/dagrejs/graphlib/wiki/API-Reference#multigraphs). 
+   * `v` and `w` can be interchanged for undirected graphs. 
+   * 
+   * Takes O(1) time.
+   * 
+   * @param edge The edge to test
+   * @param name 
+   * @returns `true` if the graph has an edge between `v` and `w` with the optional name. 
+   */
+  hasEdge(edge: Edge<E>, name?: string): boolean;
 
   /**
    * Removes the edge (v, w) if the graph has an edge between `v` and `w` with the optional name. 
@@ -286,11 +324,22 @@ export declare class Graph<G, N, E> {
    * 
    * Takes O(1) time.
    * 
-   * @param v 
-   * @param w Required when `v` is not an edge. When the `v` is an object then this is `name` param.
+   * @param edge The edge to remove.
    * @param name 
    */
-  removeEdge(v: Edge<E>|NodeIdentifier, w?: NodeIdentifier|string, name?: string): Graph<G,N,E>;
+  removeEdge(edge: Edge<E>, name?: string): this;
+  /**
+   * Removes the edge (v, w) if the graph has an edge between `v` and `w` with the optional name. 
+   * If not this function does nothing. The `name` parameter is only useful with multi graphs. 
+   * `v` and `w` can be interchanged for undirected graphs. 
+   * 
+   * Takes O(1) time.
+   * 
+   * @param v The id of the source node 
+   * @param w The id of the target node 
+   * @param name 
+   */
+  removeEdge(v: NodeIdentifier, w: NodeIdentifier, name?: string): this;
 
   /**
    * Returns all edges that point to the node `v`. 
